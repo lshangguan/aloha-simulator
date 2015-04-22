@@ -5,6 +5,7 @@ Plain and Slotted ALOHA
 
 import csv
 import random
+import math
 
 def simulate(tau, n, protocol='plain'):
 	"""tau is the window size, n is the number of transmissions, protocol should be plain/slotted (default plain)"""
@@ -25,13 +26,13 @@ def simulate(tau, n, protocol='plain'):
 	return collisions
 
 def get_packet_times(n, tau=1):
-	step = 1.0/tau #For slotted, set window size to align times to
+	mod = 10000000.0
+	step = round(tau*mod) #For slotted, set window size to align times to
 	start_times = []
-
 	#If tau != 1, we have a synchronied clock w/ window size tau
 	if tau != 1:
 		for i in range(n):
-			start_times.append(random.randrange(0, 1*step, tau*step)/step)
+			start_times.append(float(random.randrange(0, mod, step))/mod)
 	#If tau == 1, we are doing plain aloha and just want floats between 0, 1 with max precision
 	else:
 		for i in range(n):
