@@ -3,6 +3,7 @@ Data Comm Project
 Plain and Slotted ALOHA
 """
 
+import csv
 import random
 
 def simulate(tau, n, protocol='plain'):
@@ -36,3 +37,25 @@ def get_packet_times(n, tau=1):
 		for i in range(n):
 			start_times.append(random.random())
 	return start_times
+
+def average_simulation(tau, transmissions, n, protocol='plain'):
+	average = 0
+	for i in range(n):
+		average += simulate(tau, transmissions, protocol)
+	return average/float(n)
+
+def output_csv(start, end, step, transmissions, n, outfile):
+	if start > end:
+		temp = start
+		start = end
+		end = temp
+		step *= -1.0
+	with open(outfile, 'w') as csvfile:
+		grapher = csv.writer(csvfile, dialect='excel')
+		grapher.writerow(['Tau', 'Plain Collisions', 'Slotted Collisions'])
+		while start <= end:
+			plain_collisions = average_simulation(start, transmissions, n)
+			slotted_collisions = average_simulation(start, transmissions, n, 'slotted')
+			grapher.writerow([start, plain_collisions, slotted_collisions])
+			start += step
+
